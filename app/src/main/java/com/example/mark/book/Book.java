@@ -20,6 +20,36 @@ public class Book {
     String titolo;
     String autore;
     String id;
+    String image;
+    String descrizione;
+    String casaeditrice;
+    String paginenum;
+    private boolean isShowOnTop;
+
+    public String getPaginenum() {
+        return paginenum;
+    }
+
+    public void setPaginenum(String paginenum) {
+        this.paginenum = paginenum;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public String getCasaeditrice() {
+        return casaeditrice;
+    }
+
+    public void setCasaeditrice(String casaeditrice) {
+        this.casaeditrice = casaeditrice;
+    }
+
     ArrayList<String>authors=new ArrayList<>();
 
 
@@ -32,11 +62,13 @@ public class Book {
         this.imageView = imageView;
     }
 
-    public Book(String titolo,String imageView) {
+    public Book(String titolo,String imageView,String paginenum) {
 
         this.titolo = titolo;
 
         this.imageView = imageView;
+
+        this.paginenum=paginenum;
     }
 
     String imageView;
@@ -76,20 +108,26 @@ public class Book {
         this.id = id;
     }
 
-    public Book(JSONObject jsonNote){
-        try {
-            id=jsonNote.getString("id");
-            titolo = jsonNote.getJSONObject("volumeInfo").getString("title");
-            JSONArray jsonauthors= jsonNote.getJSONObject("volumeInfo").getJSONArray("authors");
-            for (int i=0;i<jsonauthors.length();i++){
+    public Book(JSONObject jsonNote) throws JSONException{
+
+        id=jsonNote.getString("id");
+        JSONObject volumeInfo=jsonNote.getJSONObject("volumeInfo");
+         titolo = volumeInfo.optString("title","No Title ");
+
+
+            JSONArray jsonauthors = volumeInfo.optJSONArray("authors");
+            if(jsonauthors!=null){
+            for (int i = 0; i < jsonauthors.length(); i++) {
                 authors.add(jsonauthors.getString(i));
-            }
-            imageView=jsonNote.getJSONObject("volumeInfo").getJSONObject("imageLinks").getString("thumbnail");
+            }} else authors.add(" ");
 
 
-        } catch (JSONException e) {
-            Log.e("Note", e.getMessage());
-        }
+            imageView = volumeInfo.getJSONObject("imageLinks").optString("thumbnail","No thumbnail");
+
+            descrizione = volumeInfo.optString("description","No description");
+            casaeditrice = volumeInfo.optString("publisher","No casa editrice");
+            paginenum = volumeInfo.optString("pageCount","No paginenum");
+
     }
 
     public String getId() {
@@ -99,6 +137,12 @@ public class Book {
     public ArrayList<String> getauthors(){
         return authors;
     }
+    public Book(){};
+
+    public boolean isShowOnTop() {
+        return isShowOnTop;
+    }
+
 
 }
 

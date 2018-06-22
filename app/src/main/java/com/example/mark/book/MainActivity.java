@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,6 +19,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<Book> mdataset=new ArrayList<>();
     public RequestQueue requestQueue;
     public EditText nometitolo;
+    public static final String TAG = "MyTag";
+    private RequestQueue queue;
+
 
 
 
@@ -43,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         mrecyclerView=findViewById(R.id.rv);
@@ -66,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 */
-
-
+        Intent intent=getIntent();
+        String returnauthors=intent.getStringExtra("autore");
 
 
         nometitolo.addTextChangedListener(new TextWatcher() {
@@ -78,23 +82,35 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                findViewById(R.id.simpleProgressBar).setVisibility(View.VISIBLE);
+
                 String strValue = nometitolo.getText().toString();
+
+                if (queue != null) {
+                    queue.cancelAll(TAG);
+                }
                 getNoteFromURL(strValue);
+
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
 
             }
         });
+
+        nometitolo.setText(returnauthors);
+
     }
 
 
     private void getNoteFromURL(String value){
 
         // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
+        queue = Volley.newRequestQueue(this);
         String url = null;
+
         try {
             url = "https://www.googleapis.com/books/v1/volumes?q="+ URLEncoder.encode(value,"UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -107,10 +123,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("jsonRequest", response.toString());
+                        findViewById(R.id.simpleProgressBar).setVisibility(View.GONE);
                         try {
                             JSONArray result = response.getJSONArray("items");
                             ArrayList<Book> noteListFromResponse = Book.getBooksList(result);
                             madapter.setBooksList(noteListFromResponse);
+
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -120,13 +139,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(MainActivity.this, "Si è verificato un errore: "+error.networkResponse.statusCode, Toast.LENGTH_LONG).show();
+
             }
         });
 
-
-
+        jsonRequest.setTag(TAG);
         queue.add(jsonRequest);
+
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (queue != null) {
+            queue.cancelAll(TAG);
+        }
+
+    }
 }

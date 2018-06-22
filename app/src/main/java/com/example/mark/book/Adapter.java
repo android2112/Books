@@ -33,23 +33,24 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_titolo, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull Adapter.ViewHolder holder, int position) {
         holder.nometitolo.setText(mdataset.get(position).getTitolo());
-       /* holder.autore.setText(mdataset.get(position));*/
+        /* holder.autore.setText(mdataset.get(position));*/
 
-       int listAuthors=mdataset.get(position).getauthors().size();
+        int listAuthors = mdataset.get(position).getauthors().size();
 
-    String authorlist="";
-       for (int i=0;i<listAuthors;i++){
-           authorlist +=mdataset.get(position).getauthors().get(i);
-           if (i<listAuthors-1)
-               authorlist+=", ";
+        String authorlist = "";
+        for (int i = 0; i < listAuthors; i++) {
+            authorlist += mdataset.get(position).getauthors().get(i);
+            if (i < listAuthors - 1)
+                authorlist += ", ";
 
-       }
-       holder.autore.setText(authorlist);
+        }
+        holder.autore.setText(authorlist);
 
 
         Glide.with(holder.nometitolo.getContext())
@@ -71,14 +72,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         public TextView autore;
         public ImageView imageView;
 
-        ArrayList<String> idlibro;
+        //ArrayList<String> idlibro;
 
         public ViewHolder(final View itemView) {
             super(itemView);
 
             cardView = itemView.findViewById(R.id.cv);
             nometitolo = itemView.findViewById(R.id.nometitolo);
-            imageView=itemView.findViewById(R.id.image);
+            imageView = itemView.findViewById(R.id.image);
             autore = itemView.findViewById(R.id.autore);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -88,11 +89,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     String title = mdataset.get(getAdapterPosition()).getTitolo();
                     ArrayList<String> autori=mdataset.get(getAdapterPosition()).getauthors();
                     */
-                    String id=mdataset.get(getAdapterPosition()).getId();
-                    Intent nuovolibro = new Intent(v.getContext(),Detail_Activity.class);
-                    nuovolibro.putExtra("id",id);
+                    String id = mdataset.get(getAdapterPosition()).getId();
+                    Intent nuovolibro = new Intent(v.getContext(), Detail_Activity.class);
+                    nuovolibro.putExtra("id", id);
 
-                    ((MainActivity)v.getContext()).startActivity(nuovolibro);
+                    ((MainActivity) v.getContext()).startActivity(nuovolibro);
 
                 }
             });

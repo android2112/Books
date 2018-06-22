@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Book</string>
     <string name="nometitolo">nometitolo</string>
+    <string name="autore">Autore</string>
+    <string name="info">Informazioni bibliografiche</string>
+    <string name="pagine">Pagine</string>
+    <string name="lingua">Lingua</string>
+    <string name="add_favorite">Favoriti</string>
+    <string name="Favoriti">Favoriti</string>
+    <string name="favoriti">Add</string>
+
 </resources>
